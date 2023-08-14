@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+	<h:head>
+		<title>User Form</title>
+	</h:head>
+
+	<h:body>
+		<h:form>
+			<p:commandButton id="submit-button" value="New"
+				onclick="PF('editDialogWidgetVar').show()" />
+		</h:form>
+
+		<p:dataTable id="dt-contacts" value="#{contactController.findAll()}"
+			var="contact" emptyMessage="No values" paginator="true"
+			rows="10" paginatorPosition="bottom">
+
+			<p:column headerText="Name" sortBy="#{contact.name}">
+				<h:outputText value="#{contact.name}" />
+			</p:column>
+
+			<p:column headerText="Last Name">
+				<h:outputText value="#{contact.lastName}" />
+			</p:column>
+
+			<p:column headerText="Contact">
+				<h:outputText value="#{contact.contacto}" />
+			</p:column>
+
+			<p:column headerText="Edit">
+				<h:form>
+					<p:commandButton id="edit-button" value="Edit"
+						action="#{contactController.prepareEdit(contact)}"
+						onclick="PF('editDialogWidgetVar').show()" />
+				</h:form>
+			</p:column>
+
+			<p:column headerText="Delete">
+				<h:form>
+					<p:commandButton id="delete-button" value="Delete"
+						update="dt-contacts"
+						action="#{contactController.remove(contact)}"/>
+				</h:form>
+			</p:column>
+
+		</p:dataTable>
+
+		<div>
+			<h:form id="dialogs">
+				<h:panelGrid id="contactPanelGrid" columns="2">
+					<p:dialog id="editDialog" header="Contact"
+						widgetVar="editDialogWidgetVar" modal="true" resizable="false"
+						closeOnEscape="true">
+						<p:messages id="messages" />
+						<p:outputPanel id="manage-contact-content" class="ui-fluid">
+							<div class="field">
+								<h:outputLabel for="name-id">Name </h:outputLabel>
+								<p:inputText id="name-id"
+									value="#{contactController.editContact.name}"
+									requiredMessage="Name is required" required="true">
+								</p:inputText>
+								<br />
+							</div>
+							<div class="field">
+								<h:outputLabel for="lastName-id">Last Name </h:outputLabel>
+								<p:inputText id="lastName-id"
+									value="#{contactController.editContact.lastName}"
+									required="true" requiredMessage="Last Name is required" />
+								<br />
+							</div>
+							<div class="field">
+								<h:outputLabel for="contact-id">Contact </h:outputLabel>
+								<p:inputText id="contact-id"
+									value="#{contactController.editContact.contacto}"
+									required="true" requiredMessage="Contact is required"
+									validatorMessage="Invalid format. Add a email or a phone number">
+									<f:validateRegex
+										pattern="^^(([\w-\.]+@([\w-]+\.)+[\w-]{2,4})|([0-9]{9}))$" />
+								</p:inputText>
+								<br />
+							</div>
+						</p:outputPanel>
+
+						<p:commandButton id="submit-button" value="Save"
+							update="dt-contacts messages"
+							action="#{contactController.save()}" />
+				
+					</p:dialog>
+				</h:panelGrid>
+			</h:form>
+		</div>
+	</h:body>
+</ui:composition>
